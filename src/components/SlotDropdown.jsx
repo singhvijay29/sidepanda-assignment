@@ -16,7 +16,7 @@ const SlotDropdown = ({ isLoading }) => {
         </SkeletonTheme>
       ) : (
         <button className="time-slot-dropdown">
-          30 min
+          60 min
           <div
             style={{
               position: "absolute",

@@ -1,7 +1,8 @@
+import moment from "moment";
 import React, { useState } from "react";
 import WhiteTickMark from "../Icons/WhiteTickMark";
 
-const SlotButton = () => {
+const SlotButton = ({ el }) => {
   const [isHovered, setIsHovered] = useState(false);
   return (
     <button
@@ -13,7 +14,8 @@ const SlotButton = () => {
         textAlign: isHovered && "left",
       }}
     >
-      03:30 PM - 04:00 PM
+      {moment(el?.start_time).format("hh:mm A")} -{" "}
+      {moment(el?.end_time).format("hh:mm A")}
       <div
         style={{
           position: "absolute",

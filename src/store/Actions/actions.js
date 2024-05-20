@@ -17,7 +17,7 @@ export const fetchData = (startDate, endDate) => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      dispatch({ type: FETCH_DATA_SUCCESS, payload: data?.[0] });
+      dispatch({ type: FETCH_DATA_SUCCESS, payload: data });
     } catch (error) {
       console.error("Fetching data failed:", error);
       dispatch({ type: FETCH_DATA_FAILURE, payload: error.message });

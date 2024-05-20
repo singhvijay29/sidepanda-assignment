@@ -14,17 +14,27 @@ const AppointmentBooking = () => {
   const [startDate, setStartDate] = useState(new Date());
   const dispatch = useDispatch();
   const dataState = useSelector((state) => state);
+  const [availableSlot, setAvailableSlot] = useState();
 
   useEffect(() => {
-    let endDate = moment(startDate, "YYYY-MM-DD");
-    endDate?.add(1, "days");
-    dispatch(
-      fetchData(
-        moment(startDate).format("YYYY-MM-DD"),
-        moment(endDate).format("YYYY-MM-DD")
-      )
-    );
-  }, [startDate, dispatch]);
+    const firstdate = moment().startOf("month").format("YYYY-MM-DD");
+    const lastdate = moment().endOf("month").format("YYYY-MM-DD");
+    dispatch(fetchData(firstdate, lastdate));
+  }, [dispatch]);
+
+  useEffect(() => {
+    const filteredData = filterDataByDate(dataState, startDate);
+    setAvailableSlot(filteredData);
+  }, [dataState?.data, startDate]);
+
+  const filterDataByDate = (data, date) => {
+    console.log(data, "data", date, "date");
+    return data?.data?.filter(
+      (slot) =>
+        moment(slot.date).format("YYYY-MM-DD") ===
+        moment(date).format("YYYY-MM-DD")
+    )?.[0];
+  };
 
   return (
     <div
@@ -56,6 +66,18 @@ const AppointmentBooking = () => {
               inline
               selected={startDate}
               onChange={(date) => setStartDate(date)}
+              minDate={new Date()}
+              onMonthChange={(currentMonth) => {
+                console.log("month change", currentMonth);
+                const firstdate = moment(currentMonth)
+                  .startOf("month")
+                  .format("YYYY-MM-DD");
+                const lastdate = moment(currentMonth)
+                  .endOf("month")
+                  .format("YYYY-MM-DD");
+                dispatch(fetchData(firstdate, lastdate));
+                setStartDate(firstdate);
+              }}
             />
           </div>
 
@@ -95,7 +117,7 @@ const AppointmentBooking = () => {
                   />
                 </SkeletonTheme>
               ) : (
-                `${moment(dataState?.data?.date).format("dddd, MMM D")}`
+                `${moment(availableSlot?.date).format("dddd, MMM D")}`
               )}
             </div>
 
@@ -122,9 +144,27 @@ const AppointmentBooking = () => {
                   overflowY: "auto",
                 }}
               >
-                {dataState?.data?.slots?.map((el, i) => (
-                  <SlotButton key={i} el={el} />
-                ))}
+                <>
+                  {availableSlot?.slots?.length === 0 ||
+                  availableSlot?.slots?.length === undefined ? (
+                    <div
+                      style={{
+                        alignSelf: "center",
+                        margin: "auto",
+                      }}
+                    >
+                      No slots available
+                    </div>
+                  ) : (
+                    <>
+                      {availableSlot?.slots?.map((el, i) => (
+                        <React.Fragment key={i}>
+                          <SlotButton el={el} />
+                        </React.Fragment>
+                      ))}
+                    </>
+                  )}
+                </>
               </div>
             )}
           </div>

@@ -6,9 +6,7 @@ import {
 
 export const fetchData = (startDate, endDate) => {
   return async (dispatch) => {
-    console.log("Fetching data from API...");
     dispatch({ type: FETCH_DATA_REQUEST, loading: true });
-
     try {
       const response = await fetch(
         `https://app.appointo.me/scripttag/mock_timeslots?start_date=${startDate}&end_date=${endDate}`

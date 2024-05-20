@@ -28,7 +28,6 @@ const AppointmentBooking = () => {
   }, [dataState?.data, startDate]);
 
   const filterDataByDate = (data, date) => {
-    console.log(data, "data", date, "date");
     return data?.data?.filter(
       (slot) =>
         moment(slot.date).format("YYYY-MM-DD") ===
@@ -68,13 +67,17 @@ const AppointmentBooking = () => {
               onChange={(date) => setStartDate(date)}
               minDate={new Date()}
               onMonthChange={(currentMonth) => {
-                console.log("month change", currentMonth);
-                const firstdate = moment(currentMonth)
-                  .startOf("month")
-                  .format("YYYY-MM-DD");
-                const lastdate = moment(currentMonth)
-                  .endOf("month")
-                  .format("YYYY-MM-DD");
+                const currentDate = moment();
+                const specifiedMonthStart =
+                  moment(currentMonth)?.startOf("month");
+                const specifiedMonthEnd = moment(currentMonth)?.endOf("month");
+                let firstdate;
+                if (specifiedMonthStart?.isSame(currentDate, "month")) {
+                  firstdate = currentDate?.format("YYYY-MM-DD");
+                } else {
+                  firstdate = specifiedMonthStart?.format("YYYY-MM-DD");
+                }
+                const lastdate = specifiedMonthEnd?.format("YYYY-MM-DD");
                 dispatch(fetchData(firstdate, lastdate));
                 setStartDate(firstdate);
               }}
